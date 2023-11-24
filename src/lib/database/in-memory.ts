@@ -18,17 +18,7 @@ const FormSchema = z.object({
 const CreateUserSchema = FormSchema.omit({ id: true });
 const users: User[] = [];
 
-async function init() {
-    const testUserPassword = await bcrypt.hash('password', 10);
-    users.push(
-        { id: 'test-user', email: 'test@test.com', username: 'test', password: testUserPassword }
-    )
-}
-
-init();
-
 export async function createUser(prevState: string | undefined, formData: FormData) {
-    // export async function createUser(email: string, username: string, password: string) {
     const parsedData = CreateUserSchema.safeParse({
         username: formData.get('username'),
         email: formData.get('email'),

@@ -5,11 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "node src/server.js",
+    "lint": "next lint",
+    "start:db": "sudo systemctl start mysql.service"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "mysql2": "^3.6.5",
     "next": "^14.0.3",
     "next-auth": "^5.0.0-beta.3",
     "react": "^18",

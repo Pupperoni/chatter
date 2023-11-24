@@ -1,7 +1,7 @@
 'use client';
 
 import { useFormState } from 'react-dom'
-import { authenticate } from '@/lib/database/in-memory'
+import { authenticate } from '@/lib/database/mysql'
 import Link from 'next/link';
 
 export default function LoginForm() {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useFormState } from 'react-dom'
-import { createUser } from '@/lib/database/in-memory'
+import { createUser } from '@/lib/database/mysql'
 import Link from 'next/link';
 
 export default function RegisterForm() {
