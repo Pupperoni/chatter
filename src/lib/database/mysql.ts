@@ -1,22 +1,10 @@
 'use server';
 
-import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
-import { signIn } from '@/auth';
-import { redirect } from 'next/navigation';
 import mysql from 'mysql2/promise'
 import { User } from '../definitions';
 
-const FormSchema = z.object({
-    id: z.string(),
-    email: z.string().email(),
-    username: z.string(),
-    password: z.string().min(6),
-    confirmPassword: z.string().min(6)
-});
-
-const CreateUserSchema = FormSchema.omit({ id: true });
 let connection: mysql.Connection;
 
 async function getConnection() {
@@ -33,29 +21,15 @@ async function destroyConnection(conn: mysql.Connection) {
     await conn.destroy();
 };
 
-export async function createUser(prevState: string | undefined, formData: FormData) {
-    const parsedData = CreateUserSchema.safeParse({
-        email: formData.get('email'),
-        username: formData.get('username'),
-        password: formData.get('password'),
-        confirmPassword: formData.get('confirmPassword')
-    });
-
-    if (!parsedData.success) {
-        console.log('Invalid data');
-        return 'Invalid data';
-    }
-
-    const { username, email, password, confirmPassword } = parsedData.data;
-
-    if (password !== confirmPassword) {
-        console.log('Passwords do not match.');
-        return 'Passwords do not match.';
-    }
-
+export async function createUser({ username, email, password }: { username: string, email: string, password: string }) {
     const id = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const newUser = {
+        id: id,
+        username: username,
+        email: email
+    }
     try {
         const connection = await getConnection();
         await connection.execute(`
@@ -63,12 +37,12 @@ export async function createUser(prevState: string | undefined, formData: FormDa
             [id, email, username, hashedPassword]
         )
         await destroyConnection(connection);
+        return newUser;
     } catch (error) {
         console.error('Error:', error);
         await destroyConnection(connection);
         throw error;
     }
-    redirect('/login');
 }
 
 interface UserArrayResult extends mysql.RowDataPacket {
@@ -93,17 +67,6 @@ export async function getUser(email: string) {
     } catch (error) {
         console.error('Error:', error);
         await destroyConnection(connection);
-        throw error;
-    }
-}
-
-export async function authenticate(prevState: string | undefined, formData: FormData) {
-    try {
-        await signIn('credentials', Object.fromEntries(formData));
-    } catch (error) {
-        if ((error as Error).message.includes('CredentialsSignin')) {
-            return 'CredentialsSignin';
-        }
         throw error;
     }
 }

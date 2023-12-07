@@ -1,20 +1,23 @@
-import { signOut } from "@/auth";
+'use client';
+
+import { useSession } from "next-auth/react";
 
 export default function Page() {
-    async function logout() {
-        'use server';
-        await signOut();
-    }
+    const { data: session, status} = useSession();
+    // console.log('client session', session);
+    let user = session?.user;
+
     return (
         <main>
-            <div className="flex">
-                Welcome, logged in user!
-            </div>
-            <div className="block">
-                <form action={logout}>
-                    <button className="rounded p-1 bg-blue-400 w-100">Logout</button>
-                </form>
-            </div>
+            {(user) ? (
+                <div className="flex">
+                    Welcome, { user.name }!
+                </div>
+            ) : (
+                <div className="flex">
+                    Welcome, guest!
+                </div>
+            )}
         </main>
     )
 }

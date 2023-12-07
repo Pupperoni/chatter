@@ -3,7 +3,8 @@
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
-import { signIn } from '@/auth';
+import { signIn } from '../auth';
+// import { signIn } from 'next-auth/react';
 import { User } from '@/lib/definitions';
 import { redirect } from 'next/navigation';
 
