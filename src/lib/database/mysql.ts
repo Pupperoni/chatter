@@ -21,7 +21,10 @@ async function destroyConnection(conn: mysql.Connection) {
     await conn.destroy();
 };
 
-export async function createUser({ username, email, password }: { username: string, email: string, password: string }) {
+
+// User
+
+export async function createUser(username: string, email: string, password: string) {
     const id = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -35,7 +38,7 @@ export async function createUser({ username, email, password }: { username: stri
         await connection.execute(`
             INSERT INTO users (id, email, username, password) VALUES (?, ?, ?, ?)`,
             [id, email, username, hashedPassword]
-        )
+        );
         await destroyConnection(connection);
         return newUser;
     } catch (error) {
@@ -70,3 +73,54 @@ export async function getUser(email: string) {
         throw error;
     }
 }
+
+
+// Room
+
+export async function createRoom(userId: string, roomName: string) {
+    const roomId = uuidv4();
+    const roomOwnerId = uuidv4();
+    const userJoinRoomId = uuidv4();
+    try {
+        const connection = await getConnection();
+        await connection.execute(`
+            INSERT INTO rooms (id, name) VALUES (?, ?)`,
+            [roomId, roomName]
+        );
+
+        await connection.execute(`
+            INSERT INTO room_owners (id, room_id, owner_id) VALUES (?, ?, ?)`,
+            [roomOwnerId, roomId, userId]
+        );
+
+        await connection.execute(`
+            INSERT INTO user_joined_rooms (id, room_id, user_id) VALUES (?, ?, ?)`,
+            [userJoinRoomId, roomId, userId]
+        )
+        await destroyConnection(connection);
+        return { id: roomId, name: roomName };
+    } catch (error) {
+        console.error('Error:', error);
+        await destroyConnection(connection);
+        throw error;
+    }
+}
+
+export async function addJoinedRoom(roomId: string, userId: string) {
+    const id = uuidv4();
+    try {
+        const connection = await getConnection();
+        await connection.execute(`
+            INSERT INTO user_joined_rooms (id, room_id, user_id) VALUES (?, ?, ?)`,
+            [id, roomId, userId]
+        )
+        await destroyConnection(connection);
+    } catch (error) {
+        console.error('Error:', error);
+        await destroyConnection(connection);
+        throw error;
+    }
+}
+
+
+// Message

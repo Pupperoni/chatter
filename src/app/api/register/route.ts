@@ -9,7 +9,7 @@ export async function POST(req: Request) {
             password: string;
         };
 
-        const user = await createUser(data)
+        const user = await createUser(data.username, data.email, data.password);
 
         return NextResponse.json({
             user: {
