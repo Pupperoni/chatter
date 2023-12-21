@@ -13,7 +13,14 @@ const mysql = require('mysql2/promise');
     });
 
     // TODO: add index
+
+    await connection.execute(`DROP TABLE IF EXISTS room_messages;`);
+    await connection.execute(`DROP TABLE IF EXISTS user_joined_rooms;`);
+    await connection.execute(`DROP TABLE IF EXISTS room_owners;`);
+    await connection.execute(`DROP TABLE IF EXISTS messages;`);
+    await connection.execute(`DROP TABLE IF EXISTS rooms;`);
     await connection.execute(`DROP TABLE IF EXISTS users;`);
+
     await connection.execute(
         `CREATE TABLE IF NOT EXISTS users (
             id VARCHAR(50) PRIMARY KEY,
@@ -23,7 +30,6 @@ const mysql = require('mysql2/promise');
         );`
     );
 
-    await connection.execute(`DROP TABLE IF EXISTS rooms;`);
     await connection.execute(
         `CREATE TABLE IF NOT EXISTS rooms (
             id VARCHAR(50) PRIMARY KEY,
@@ -31,7 +37,6 @@ const mysql = require('mysql2/promise');
         );`
     );
 
-    await connection.execute(`DROP TABLE IF EXISTS messages;`);
     await connection.execute(
         `CREATE TABLE IF NOT EXISTS messages (
             id VARCHAR(50) PRIMARY KEY,
@@ -39,7 +44,6 @@ const mysql = require('mysql2/promise');
         );`
     );
 
-    await connection.execute(`DROP TABLE IF EXISTS room_owners;`);
     await connection.execute(
         `CREATE TABLE IF NOT EXISTS room_owners (
             id VARCHAR(50) PRIMARY KEY,
@@ -50,29 +54,16 @@ const mysql = require('mysql2/promise');
         );`
     );
 
-    await connection.execute(`DROP TABLE IF EXISTS room_owners;`);
-    await connection.execute(
-        `CREATE TABLE IF NOT EXISTS room_owners (
-            id VARCHAR(50) PRIMARY KEY,
-            room_id VARCHAR(50),
-            owner_id VARCHAR(50),
-            FOREIGN KEY (room_id) REFERENCES rooms(id),
-            FOREIGN KEY (owner_id) REFERENCES users(id)
-        );`
-    );
-
-    await connection.execute(`DROP TABLE IF EXISTS user_joined_rooms;`);
     await connection.execute(
         `CREATE TABLE IF NOT EXISTS user_joined_rooms (
             id VARCHAR(50) PRIMARY KEY,
             room_id VARCHAR(50),
             user_id VARCHAR(50),
             FOREIGN KEY (room_id) REFERENCES rooms(id),
-            FOREIGN KEY (owner_id) REFERENCES users(id)
+            FOREIGN KEY (user_id) REFERENCES users(id)
         );`
     );
 
-    await connection.execute(`DROP TABLE IF EXISTS room_messages;`);
     await connection.execute(
         `CREATE TABLE IF NOT EXISTS room_messages (
             id VARCHAR(50) PRIMARY KEY,
@@ -80,7 +71,7 @@ const mysql = require('mysql2/promise');
             user_id VARCHAR(50),
             message_id VARCHAR(50),
             FOREIGN KEY (room_id) REFERENCES rooms(id),
-            FOREIGN KEY (owner_id) REFERENCES users(id),
+            FOREIGN KEY (user_id) REFERENCES users(id),
             FOREIGN KEY (message_id) REFERENCES messages(id)
         );`
     );
