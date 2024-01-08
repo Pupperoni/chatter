@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { createRoom } from "@/lib/database/mysql";
+import { Room } from "@/lib/definitions";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -19,9 +20,7 @@ export async function POST(req: Request) {
         const room = await createRoom(user.id, data.roomName);
 
         console.log('new room', room);
-        return NextResponse.json({
-            room: room
-        });
+        return NextResponse.json(room);
     } catch (error: any) {
         return new NextResponse(
             JSON.stringify({

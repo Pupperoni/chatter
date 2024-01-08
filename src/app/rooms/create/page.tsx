@@ -1,6 +1,5 @@
 import { useSession } from "next-auth/react";
 import { CreateRoomForm } from "./create-room-form";
-import { redirect } from "next/navigation";
 
 export default function Page() {
 

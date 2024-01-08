@@ -1,9 +1,10 @@
 'use client';
 
-import { redirect } from 'next/navigation';
+import { useRouter  } from 'next/navigation';
 import { ChangeEvent, useState } from 'react';
 
 export function CreateRoomForm() {
+    const router = useRouter();
     const [formValues, setFormValues] = useState({
         roomName: ''
     })
@@ -21,6 +22,7 @@ export function CreateRoomForm() {
                     "Content-Type": "application/json",
                 },
             });
+            const newRoom = await res.json();
 
             if (!res.ok) {
                 // set error
@@ -28,7 +30,7 @@ export function CreateRoomForm() {
             }
 
             // TODO: redirect to the new room
-            redirect('/home');
+            router.push(`/rooms/${newRoom.id}`)
 
         } catch (error: any) {
             // set error

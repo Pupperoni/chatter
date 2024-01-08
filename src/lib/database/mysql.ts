@@ -98,7 +98,7 @@ export async function createRoom(userId: string, roomName: string) {
             [userJoinRoomId, roomId, userId]
         )
         await destroyConnection(connection);
-        return { id: roomId, name: roomName };
+        return { id: roomId, roomName: roomName };
     } catch (error) {
         console.error('Error:', error);
         await destroyConnection(connection);

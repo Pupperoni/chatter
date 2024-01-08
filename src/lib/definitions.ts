@@ -4,3 +4,8 @@ export type User = {
     username: string;
     password: string;
 }
+
+export type Room = {
+    id: string;
+    roomName: string;
+}
